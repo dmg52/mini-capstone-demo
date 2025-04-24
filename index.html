@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ingestion & QA Demo</title>
+  <style>
+    :root {
+        --primary: #242937; /* Dark navy from the logo */
+      --primary-light: #373e4f;
+      --secondary: #a3e0d1; /* Mint green from the logo */
+      --accent: #7fd4d4; /* Light turquoise from the logo */
+      --light: #f5f5e9; /* Cream/off-white from the logo */
+      --dark: #1b2030;  
+      --success: #84c7a4;
+      --danger: #e86a6a;
+      --gray: #adb5bd;
+    }
+    
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f2f5;
+      color: var(--dark);
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .logo {
+      position: absolute;
+      top: 0px;
+      left: 20px;
+      height: 200px;
+      width: 200px;
+      z-index: 100;
+    }
+    
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 2rem 0;
+      text-align: center;
+      border-radius: 0 0 10px 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+    }
+    
+    h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      letter-spacing: 1px;
+    }
+    
+    section {
+      background: white;
+      margin-bottom: 2rem;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    section:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    h2 {
+      color: var(--primary);
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 0.5rem;
+      margin-top: 0;
+      display: flex;
+      align-items: center;
+    }
+    
+    h2::before {
+      content: "";
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      background-color: var(--accent);
+      margin-right: 10px;
+      border-radius: 50%;
+    }
+    
+    h3 {
+      color: var(--secondary);
+      margin-top: 1.5rem;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--primary-dark);
+    }
+    
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border: 2px solid var(--gray);
+      border-radius: 5px;
+      font-family: inherit;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+    
+    input[type="text"]:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    }
+    
+    input[type="file"] {
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      background-color: var(--light);
+      border-radius: 5px;
+      border: 1px dashed var(--gray);
+    }
+    
+    button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    button:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    pre {
+      background: #f6f8fa;
+      padding: 1.5rem;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      font-family: 'Courier New', Courier, monospace;
+      border-left: 4px solid var(--accent);
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    .status {
+      padding: 0.75rem;
+      margin-top: 1rem;
+      border-radius: 5px;
+      font-weight: 500;
+    }
+    
+    .status-loading {
+      background-color: rgba(76, 201, 240, 0.1);
+      color: var(--accent);
+      border-left: 4px solid var(--accent);
+    }
+    
+    .status-success {
+      background-color: rgba(56, 176, 0, 0.1);
+      color: var(--success);
+      border-left: 4px solid var(--success);
+    }
+    
+    .status-error {
+      background-color: rgba(217, 4, 41, 0.1);
+      color: var(--danger);
+      border-left: 4px solid var(--danger);
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+      section {
+        padding: 1.5rem;
+      }
+      .logo {
+        width: 60px;
+        top: 10px;
+        left: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <img src="/images/theoforgeLogoBorder4.png" alt="TheoForge Logo" class="logo">
+  <header>
+    <div class="container">
+      <h1>Theoforge - Simulations & Backend Demo</h1>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- UPLOAD FORM -->
+    <section>
+      <h2>1. Upload PDF</h2>
+      <form id="upload-form">
+        <div class="form-group">
+          <label for="pdf-file">Select PDF to ingest:</label>
+          <input type="file" id="pdf-file" accept=".pdf" required />
+        </div>
+        <button type="submit">Upload to Database</button>
+      </form>
+      <div id="upload-status" class="status"></div>
+    </section>
+
+    <!-- QA FORM -->
+    <section>
+      <h2>2. Ask a Question</h2>
+      <form id="qa-form">
+        <div class="form-group">
+          <label for="question">Your question:</label>
+          <textarea id="question" rows="3" required placeholder="Type your question about the document..."></textarea>
+        </div>
+        <button type="submit">Ask</button>
+      </form>
+      <h3>Answer:</h3>
+      <pre id="answer-output">(no answer yet)</pre>
+    </section>
+  </div>
+
+  <script>
+    // base URL of your API; if frontend & API are co-hosted, this can be ""
+    const API_BASE = "";
+
+    function updateStatus(element, message, type) {
+      element.textContent = message;
+      element.className = `status status-${type}`;
+    }
+
+    // 1) Handle PDF upload & ingestion
+    document.getElementById("upload-form").addEventListener("submit", async e => {
+      e.preventDefault();
+      const fileInput = document.getElementById("pdf-file");
+      const statusElement = document.getElementById("upload-status");
+      
+      if (!fileInput.files.length) return;
+
+      const formData = new FormData();
+      formData.append("file", fileInput.files[0]);
+
+      updateStatus(statusElement, "Uploading and processing your document...", "loading");
+      
+      try {
+        const resp = await fetch(`${API_BASE}/upload/ingest/file`, {
+          method: "POST",
+          body: formData,
+        });
+        const json = await resp.json();
+        
+        if (!resp.ok) throw new Error(json.detail || resp.statusText);
+        
+        updateStatus(statusElement, `Successfully queued: ${json.document}`, "success");
+      } catch (err) {
+        updateStatus(statusElement, `Error: ${err.message}`, "error");
+      }
+    });
+
+    // 2) Handle QA requests
+    document.getElementById("qa-form").addEventListener("submit", async e => {
+      e.preventDefault();
+      const question = document.getElementById("question").value.trim();
+      const outputElement = document.getElementById("answer-output");
+      
+      if (!question) return;
+
+      outputElement.textContent = "Thinking...";
+      
+      try {
+        const resp = await fetch(`${API_BASE}/upload/qa`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question }),
+        });
+        const json = await resp.json();
+        
+        if (!resp.ok) throw new Error(json.detail || resp.statusText);
+        
+        outputElement.textContent = json.answer;
+      } catch (err) {
+        outputElement.textContent = `Error: ${err.message}`;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  neo4j:
+    image: neo4j:5
+    environment:
+      - NEO4J_AUTH=neo4j/${NEO4J_PASS}
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4j_data:/data
+
+  api:
+    build: .
+    depends_on:
+      - neo4j
+    volumes:
+      - .:/app
+    env_file:
+      - ./.env
+    ports:
+      - "8000:8000"
+
+  inspector:
+    build: .
+    depends_on:
+      - api
+    working_dir: /app
+    volumes:
+      - .:/app
+    env_file:
+      - ./.env
+    # exec form avoids splitting into separate shell lines
+    command:
+      - mcp
+      - dev
+      - app/mcp_tools.py
+    ports:
+      - "6274:6274"
+
+volumes:
+  neo4j_data:
